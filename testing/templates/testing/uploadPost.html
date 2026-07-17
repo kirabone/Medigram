@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Post</title>
+</head>
+
+<body>
+
+<h2>Upload Post</h2>
+
+<form id="uploadForm">
+
+    <label>Caption</label>
+    <br>
+    <textarea
+        name="caption"
+        rows="5"
+        cols="50"></textarea>
+
+    <br><br>
+
+    <label>Type</label>
+    <br>
+
+    <select name="type">
+        <option value="TEXT">TEXT</option>
+        <option value="POST">POST</option>
+        <option value="REEL">REEL</option>
+        <option value="STORY">STORY</option>
+    </select>
+
+    <br><br>
+
+    <label>Media (Optional)</label>
+    <br>
+
+    <input
+        type="file"
+        name="media">
+
+    <br><br>
+
+    <button type="submit">
+        Upload
+    </button>
+
+</form>
+
+<script>
+
+function getCookie(name) {
+
+    const cookies = document.cookie.split(";");
+
+    for (let cookie of cookies) {
+
+        cookie = cookie.trim();
+
+        if (cookie.startsWith(name + "=")) {
+
+            return decodeURIComponent(
+                cookie.substring(name.length + 1)
+            );
+
+        }
+
+    }
+
+    return null;
+
+}
+
+document
+.getElementById("uploadForm")
+.addEventListener("submit", async function(event){
+
+    event.preventDefault();
+
+    const formData = new FormData(this);
+
+    const csrftoken = getCookie("csrftoken");
+
+    try{
+
+        const response = await fetch(
+
+            "http://127.0.0.1:8000/post/create/",
+
+            {
+
+                method: "POST",
+
+                credentials: "include",
+
+                headers: {
+
+                    "X-CSRFToken": csrftoken
+
+                },
+
+                body: formData
+
+            }
+
+        );
+
+        console.log(response.status);
+        console.log(await response.text());
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>

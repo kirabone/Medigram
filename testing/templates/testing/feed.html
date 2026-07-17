@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Feed Test</title>
+</head>
+
+<body>
+
+<h1>Feed Test</h1>
+
+<button id="load">
+    Load Feed
+</button>
+
+<hr>
+
+<div id="feed"></div>
+
+<script>
+
+const feed = document.getElementById("feed");
+
+document.getElementById("load").addEventListener("click", loadFeed);
+
+async function loadFeed() {
+
+    feed.innerHTML = "";
+
+    const response = await fetch("/post/feed/?type=POST&type=REEL&type=TEXT", {
+        credentials: "include"
+    });
+
+    const posts = await response.json();
+
+    posts.forEach(post => {
+
+        const card = document.createElement("div");
+
+        card.style.marginBottom = "30px";
+
+        card.innerHTML = `
+            <h3>${post.type}</h3>
+
+            <p>${post.caption}</p>
+        `;
+
+        if (post.media) {
+
+            if (post.media.endsWith(".mp4")) {
+
+                const video = document.createElement("video");
+
+                video.src = post.media;
+                video.controls = true;
+                video.width = 400;
+
+                card.appendChild(video);
+
+            }
+
+            else {
+
+                const image = document.createElement("img");
+
+                image.src = post.media;
+                image.width = 400;
+
+                card.appendChild(image);
+
+            }
+
+        }
+
+        feed.appendChild(card);
+
+    });
+
+}
+
+</script>
+
+</body>
+
+</html>

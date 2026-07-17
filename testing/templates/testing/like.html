@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Like Tester</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        input {
+            padding: 8px;
+            width: 200px;
+        }
+
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        pre {
+            margin-top: 20px;
+            background: #eee;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Like / Dislike Tester</h2>
+
+    <input
+        type="number"
+        id="postId"
+        placeholder="Enter Post ID"
+        value="1"
+    >
+
+    <br><br>
+
+    <button onclick="likePost()">👍 Like</button>
+    <button onclick="dislikePost()">👎 Dislike</button>
+
+    <pre id="output"></pre>
+
+<script>
+
+function getCookie(name) {
+    let cookieValue = null;
+
+    if (document.cookie && document.cookie !== "") {
+
+        const cookies = document.cookie.split(";");
+
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+
+    return cookieValue;
+}
+
+const csrftoken = getCookie("csrftoken");
+
+async function likePost() {
+
+    const postId = document.getElementById("postId").value;
+
+    const response = await fetch(`/post/${postId}/like/`, {
+
+        method: "POST",
+
+        headers: {
+            "X-CSRFToken": csrftoken
+        }
+
+    });
+
+    const text = await response.text();
+
+    document.getElementById("output").textContent =
+`Status: ${response.status}
+
+${text}`;
+}
+
+async function dislikePost() {
+
+    const postId = document.getElementById("postId").value;
+
+    const response = await fetch(`/post/${postId}/unlike/`, {
+
+        method: "DELETE",
+
+        headers: {
+            "X-CSRFToken": csrftoken
+        }
+
+    });
+
+    const text = await response.text();
+
+    document.getElementById("output").textContent =
+`Status: ${response.status}
+
+${text}`;
+}
+
+</script>
+
+</body>
+</html>

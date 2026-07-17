@@ -57,7 +57,15 @@ class Like(PostInteraction):
 
 class Comment(PostInteraction):
 
-    comment = models.TextField(max_length=5200)
+    reply_of = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="replies"
+    )
+
+    comment = models.TextField(max_length=520)
 
 class Save(PostInteraction):
     class Meta:
@@ -71,4 +79,55 @@ class Save(PostInteraction):
 class Share(PostInteraction):
     pass
 
+class FeedPriority(models.Model):
 
+    class Priority(models.IntegerChoices):
+        NEW = 0, "Never Served"
+        SERVED = -1, "Served"
+        INTERACTED = -10, "Interacted"
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="feed_priorities"
+    )
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="feed_priorities"
+    )
+
+    priority = models.IntegerField(
+        choices=Priority.choices,
+        default=Priority.NEW
+    )
+
+    served_count = models.PositiveIntegerField(default=0)
+
+    last_served_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    interacted_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "post"],
+                name="feed_priority_user_post"
+            )
+        ]
+
+        indexes = [
+            models.Index(
+                fields=["user", "priority", "last_served_at"]
+            )
+        ]
