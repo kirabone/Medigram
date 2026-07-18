@@ -1,11 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User   #user object
 
-class Post(models.Model):
+class Post(models.Model):    #post object
 
     class Visibility(models.TextChoices):
-        PUBLIC = "PUBLIC", "Public"
-        FOLLOWERS = "FOLLOWERS", "Followers"
+        PUBLIC = "PUBLIC", "Public"   
+        FOLLOWERS = "FOLLOWERS", "Followers" 
         PRIVATE = "PRIVATE", "Private"
 
     class PostType(models.TextChoices):
@@ -54,18 +54,6 @@ class Like(PostInteraction):
                 name="like_user_post"
             )
         ]
-
-class Comment(PostInteraction):
-
-    reply_of = models.ForeignKey(
-        "self",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="replies"
-    )
-
-    comment = models.TextField(max_length=520)
 
 class Save(PostInteraction):
     class Meta:

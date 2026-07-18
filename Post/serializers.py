@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from .models import (
     Post,
     Like,
-    Comment,
     Save,
     Share,
 )
@@ -32,11 +31,7 @@ class LikeSerializer(serializers.ModelSerializer):
         model = Like
         fields = "__all__"
 
-class CommentSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = Comment
-        fields = "__all__"
 
 class SaveSerializer(serializers.ModelSerializer):
 
